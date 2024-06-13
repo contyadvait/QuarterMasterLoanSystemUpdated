@@ -20,11 +20,10 @@ def view_guitars():
     table = PrettyTable(["S/N", "Code", "Brand", "Allocation", "Level", "BC", "MOE Code", "Remarks", "Rented"])
 
     for document in documents:
-        print(document, type(document))
         rows = []
         for key in document:
             if key != "_id":
-                if document[key] != "nan":
+                if str(document[key]) != "nan":
                     rows.append(document[key])
                 elif key == "S/N":
                     rows.append(str(document[key]))
