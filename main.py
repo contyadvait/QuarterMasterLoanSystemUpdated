@@ -1,3 +1,4 @@
+from datetime import datetime
 from time import sleep
 import hashlib
 from getpass import getpass
@@ -7,8 +8,6 @@ import secrets
 
 username = ""
 password = ""
-
-from datetime import datetime
 
 
 def validate_date(date_str):
@@ -62,7 +61,8 @@ def login_page():
 
 def create_loa():
     while True:
-        loa_date = input("What is the date you are not coming for CCA? (in DDMMYYYY) ")
+        loa_date = input(
+            "What is the date you are not coming for CCA? (in DDMMYYYY) ")
         if validate_date(loa_date):
             break
 
@@ -72,7 +72,8 @@ def create_loa():
     reason = input("What is the reason for not coming on that date? ")
 
     while True:
-        name = input("What is your name? (Please enter in the exact format of the attendance sheet) ")
+        name = input(
+            "What is your name? (Please enter in the exact format of the attendance sheet) ")
 
         if name.title() in secrets.NAMES:
             break
@@ -92,11 +93,21 @@ def main():
     print("[2] Request a Leave-Of-Absence")
     print("[3] Loan a guitar")
     print("[4] Exit")
-    answer = verified_input("Which index would you like to select? ", 1, 2)
+    answer = verified_input("Which index would you like to select? ", 1, 4)
     if answer == "1":
         login_page()
     elif answer == "2":
         create_loa()
+    elif answer == "3":
+        while True:
+            name = input(
+                "What is your name? (Please enter in the exact format of the attendance sheet) ")
+
+            if name.title() in secrets.NAMES:
+                break
+            else:
+                print("Name not found. Please try again.")
+        mongodb.view_guitars(name=name)
     else:
         exit(0)
 

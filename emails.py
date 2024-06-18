@@ -28,7 +28,8 @@ def send_email(subject, body, to_emails, attachment_path):
             part = MIMEBase('application', 'pdf')
             part.set_payload(attachment.read())
         encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename="{attachment_path}"')
+        part.add_header('Content-Disposition',
+                        f'attachment; filename="{attachment_path}"')
         msg.attach(part)
 
         # Connect to the server and send the email
@@ -39,7 +40,7 @@ def send_email(subject, body, to_emails, attachment_path):
         server.sendmail(sender_email, to_emails, text)
         server.quit()
 
-        print(f'Email sent to {", ".join(to_emails)}')
+        print(f"Email sent to your email and the teachers' emails.")
 
     except smtplib.SMTPAuthenticationError as e:
         print(f'Authentication error: {e}')

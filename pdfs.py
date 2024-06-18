@@ -3,6 +3,8 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.pagesizes import LETTER
 from reportlab.lib.units import inch
 from reportlab.lib.utils import ImageReader
+
+import secrets
 from gemini import generate_gemini_response
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Paragraph
@@ -262,9 +264,10 @@ def create_loan_pdf(guitar_model, email, name, clas, serial_num):
     os.remove("loan-sheet.pdf")
     os.remove("loan-return-sheet.pdf")
 
-    send_email(f"Guitar Loan for {name}",
-               "Dear QMs,\nThis is the loan applied for by {name} on guitar {guitar_model}. File is attached accordingly.\nThis is an automated email, please do not reply to this email.\nThank you.",
-               ["advait@contractor.net", email], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
+    send_email(f"Guitar Loan for {name.upper()}",
+               f"Dear QMs/Teachers,\nThis is the loan applied for by {name.upper()} on guitar {guitar_model} {serial_num}. File is attached "
+               "accordingly.\nThis is an automated email, please do not reply to this email.\nThank you.",
+               ["advaitthepro@outlook.com", email], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
     os.remove(f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
