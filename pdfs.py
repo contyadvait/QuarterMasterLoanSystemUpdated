@@ -8,12 +8,13 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import Paragraph
 from pypdf import PdfMerger
 from emails import send_email
+import re
 
 
 # QM code: 35609e13ba03bc216f3106b680b368840c71746b074df7e32a9706f13d0e110a
 
 
-def create_loan_pdf(guitar_model, days_loaned, name, clas, serial_num):
+def create_loan_pdf(guitar_model, email, name, clas, serial_num):
     canvas = Canvas("loan-sheet.pdf", pagesize=LETTER)
     canvas.setFont("Times-Roman", 18)
 
@@ -263,7 +264,7 @@ def create_loan_pdf(guitar_model, days_loaned, name, clas, serial_num):
 
     send_email(f"Guitar Loan for {name}",
                "Dear QMs,\nThis is the loan applied for by {name} on guitar {guitar_model}. File is attached accordingly.\nThis is an automated email, please do not reply to this email.\nThank you.",
-               ["advait@contractor.net"], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
+               ["advait@contractor.net", email], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
     os.remove(f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
@@ -339,3 +340,13 @@ def create_loa_pdf(name, date, reason):
 
     os.remove(f"LEAVE_OF_ABSENCE_{name.upper()}.pdf")
 
+def verify_email(email):
+    # A bit of help from CHAT here
+    # Regex pattern for emails:
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
+    # Checking if pattern is in email
+    if re.match(email_regex, email):
+        return True
+
+    return False
