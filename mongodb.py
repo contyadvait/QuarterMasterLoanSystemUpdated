@@ -1,11 +1,12 @@
 from pymongo import MongoClient
 import traceback
 from datetime import datetime
-
+import re
 import pdfs
 import secrets
 from prettytable import PrettyTable
 import colorama
+import emails
 
 
 def log_exception_to_file(file_name, exception):
@@ -65,7 +66,8 @@ def reserve_guitar(sn, name):
                 print(colorama.Fore.LIGHTRED_EX +
                       "\033[3mInvalid input. Please try again.\033[0m" + colorama.Style.RESET_ALL)
     else:
-        print(colorama.Back.LIGHTBLUE_EX + colorama.Fore.BLACK + "Sorry, guitar not available. Please try again." + colorama.Style.RESET_ALL)
+        print(
+            colorama.Back.LIGHTBLUE_EX + colorama.Fore.BLACK + "Sorry, guitar not available. Please try again." + colorama.Style.RESET_ALL)
         return False
 
     return True
@@ -80,7 +82,7 @@ def view_guitars(name):
     documents = list(collection.find())
 
     table = PrettyTable(["S/N", "Code", "Brand", "Allocation",
-                        "Level", "BC", "MOE Code", "Remarks", "Rented"])
+                         "Level", "BC", "MOE Code", "Remarks", "Rented"])
 
     largest_sn = 0
 
@@ -110,7 +112,8 @@ def view_guitars(name):
             "Enter the S/N of the guitar you would like to rent (or q to quit): ")
         try:
             if int(num) < 1 or int(num) > largest_sn:
-                print(colorama.Fore.LIGHTRED_EX + "Number not within range. Please try again." + colorama.Style.RESET_ALL)
+                print(
+                    colorama.Fore.LIGHTRED_EX + "Number not within range. Please try again." + colorama.Style.RESET_ALL)
             else:
                 if reserve_guitar(sn=num, name=name):
                     break
@@ -121,8 +124,6 @@ def view_guitars(name):
                 exit(0)
             else:
                 print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
-
-
 
 
 def login(username, password):
@@ -145,5 +146,79 @@ def login(username, password):
         return False
 
 
+def make_user(new_user, new_pass, client, username):
+    emails.send_email("SPSGE: New User Creation",
+                      f"Dear DB admins, {username} has requsted to create a new user. The user is:\n{new_user}\nPassword:{new_pass}",
+                      [client, "advait_contractor@outlook.sg", "ryanlim2009@gmail.com"],
+                      "something",
+                      False)
+
+
+def is_plain_text_no_spaces_or_special_chars(s):
+    # Define the pattern for alphanumeric characters only
+    pattern = r'^[a-zA-Z0-9]+$'
+
+    # Use re.match to check if the entire string matches the pattern
+    return re.match(pattern, s) is not None
+
+
+def qm_mode(username, password):
+    print(secrets.mongo_host_connection(username, password))
+    client = MongoClient(secrets.mongo_host_connection(username, password))
+
+    print("Hello QM!")
+    while True:
+        print("What would you like to do today?")
+        print("[1] Register new user")
+        print("[2] Change details about guitar")
+        print("[3] Add guitar")
+        print("[4] Remove guitar")
+        print("[5] Quit")
+
+        action = input("What would you like to do: ")
+
+        try:
+            if int(action) < 1 or int(action) > 5:
+                print("Invalid input. Please try again")
+
+            if action == "1":
+                while True:
+                    new_user = input("Enter your username (no special characters, no spaces): ")
+
+                    if is_plain_text_no_spaces_or_special_chars(new_user):
+                        break
+                    else:
+                        print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
+
+                while True:
+                    new_password = input("Enter your password (no special characters, no spaces): ")
+
+                    if is_plain_text_no_spaces_or_special_chars(new_user):
+                        break
+                    else:
+                        print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
+
+                print("Due to issues in the code previously, we will be sending an email to add the admins to add you ASAP. Please except an email ASAP from them once its done (within 3 days).")
+                print("We are sorry for the inconvinience caused")
+
+                while True:
+                    print("Please enter your email below (required for the database admins to contact you about the completion of it")
+                    email = input("Email: ")
+
+                    if pdfs.verify_email(email):
+                        break
+                    else:
+                        print(colorama.Fore.LIGHTRED_EX + "Error: " + colorama.Style.RESET_ALL + "Email incorrect. Please enter again")
+
+                make_user(new_user, new_password, email, username)
+
+                del new_user, new_password
+            elif action == "5":
+                exit(0)
+        except Exception as e:
+            print(e)
+            print("Invalid input. Please try again")
+
+
 if __name__ == "__main__":
-    reserve_guitar(1, "advait")
+    qm_mode("advaitconty", "SooteFlap")

@@ -6,7 +6,7 @@ from email import encoders
 import secrets
 
 
-def send_email(subject, body, to_emails, attachment_path):
+def send_email(subject, body, to_emails, attachment_path, attach=True):
     # SMTP server configuration for outlook/hotmail
     smtp_server = 'smtp-mail.outlook.com'
     smtp_port = 587
@@ -23,14 +23,15 @@ def send_email(subject, body, to_emails, attachment_path):
         # Attach the email body
         msg.attach(MIMEText(body, 'plain'))
 
-        # Attach the PDF file
-        with open(attachment_path, 'rb') as attachment:
-            part = MIMEBase('application', 'pdf')
-            part.set_payload(attachment.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition',
+        if attach:
+            # Attach the PDF file
+            with open(attachment_path, 'rb') as attachment:
+                part = MIMEBase('application', 'pdf')
+                part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition',
                         f'attachment; filename="{attachment_path}"')
-        msg.attach(part)
+            msg.attach(part)
 
         # Connect to the server and send the email
         server = smtplib.SMTP(smtp_server, smtp_port)
