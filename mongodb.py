@@ -16,7 +16,7 @@ def log_exception_to_file(file_name, exception):
         f.close()
 
 
-def reserve_guitar(sn, name):
+def reserve_guitar(sn, name, reset=False):
     colorama.init()
     client = MongoClient(secrets.mongo_host_connection("user", "blank", True))
     db = client["inventory"]
@@ -65,6 +65,30 @@ def reserve_guitar(sn, name):
             else:
                 print(colorama.Fore.LIGHTRED_EX +
                       "\033[3mInvalid input. Please try again.\033[0m" + colorama.Style.RESET_ALL)
+    elif reset:
+        print("\033[3mWould you like to reset it?\033[0m")
+        while True:
+            ask = input("[Y/n (to exit app)] ")
+            if ask.lower() == "y":
+                update_operation = {"$set": {"RENTED": "F"}}
+
+                result = collection.update_one(query, update_operation)
+
+                if result.matched_count > 0:
+                    print("Thank you for using SPSGE App!")
+                    print("Exiting app...")
+                    exit(0)
+                else:
+                    print("Failed to block guitar.")
+                    break
+
+            elif ask.lower() == "n":
+                print("Thank you for using SPSGE App!")
+                print("Exiting app...")
+                exit(0)
+            else:
+                print(colorama.Fore.LIGHTRED_EX +
+                      "\033[3mInvalid input. Please try again.\033[0m" + colorama.Style.RESET_ALL)
     else:
         print(
             colorama.Back.LIGHTBLUE_EX + colorama.Fore.BLACK + "Sorry, guitar not available. Please try again." + colorama.Style.RESET_ALL)
@@ -73,7 +97,7 @@ def reserve_guitar(sn, name):
     return True
 
 
-def view_guitars(name):
+def view_guitars(name, reset=False):
     colorama.init()
     client = MongoClient(secrets.mongo_host_connection("user", "blank", True))
     db = client["inventory"]
@@ -105,26 +129,47 @@ def view_guitars(name):
 
     print(colorama.Back.LIGHTBLACK_EX +
           "\x1B[3mAll data available on the guitars has been shown.\x1B[0m")
-    print("To enter which guitar to loan," + colorama.Fore.LIGHTGREEN_EX + " enter the S/N " + colorama.Fore.RESET +
-          "of it. Else," + colorama.Fore.LIGHTRED_EX + " enter q to exit." + colorama.Style.RESET_ALL)
-    while True:
-        num = input(
-            "Enter the S/N of the guitar you would like to rent (or q to quit): ")
-        try:
-            if int(num) < 1 or int(num) > largest_sn:
-                print(
-                    colorama.Fore.LIGHTRED_EX + "Number not within range. Please try again." + colorama.Style.RESET_ALL)
-            else:
-                if reserve_guitar(sn=num, name=name):
-                    break
-        except Exception:
-            if num.lower() == "q":
-                print("Thank you for using SPSGE App!")
-                print("Exiting app...")
-                exit(0)
-            else:
-                print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
 
+    if not reset:
+        print("To enter which guitar to loan," + colorama.Fore.LIGHTGREEN_EX + " enter the S/N " + colorama.Fore.RESET +
+          "of it. Else," + colorama.Fore.LIGHTRED_EX + " enter q to exit." + colorama.Style.RESET_ALL)
+        while True:
+            num = input(
+            "Enter the S/N of the guitar you would like to rent (or q to quit): ")
+            try:
+                if int(num) < 1 or int(num) > largest_sn:
+                    print(
+                    colorama.Fore.LIGHTRED_EX + "Number not within range. Please try again." + colorama.Style.RESET_ALL)
+                else:
+                    if reserve_guitar(sn=num, name=name):
+                        break
+            except Exception:
+                if num.lower() == "q":
+                    print("Thank you for using SPSGE App!")
+                    print("Exiting app...")
+                    exit(0)
+                else:
+                    print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
+    else:
+        print("To enter which guitar to reset," + colorama.Fore.LIGHTGREEN_EX + " enter the S/N " + colorama.Fore.RESET +
+          "of it. Else," + colorama.Fore.LIGHTRED_EX + " enter q to exit." + colorama.Style.RESET_ALL)
+        while True:
+            num = input(
+            "Enter the S/N of the guitar you would like to reset (or q to quit): ")
+            try:
+                if int(num) < 1 or int(num) > largest_sn:
+                    print(
+                    colorama.Fore.LIGHTRED_EX + "Number not within range. Please try again." + colorama.Style.RESET_ALL)
+                else:
+                    if reserve_guitar(sn=num, name=name, reset=True):
+                        break
+            except Exception:
+                if num.lower() == "q":
+                    print("Thank you for using SPSGE App!")
+                    print("Exiting app...")
+                    exit(0)
+                else:
+                    print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
 
 def login(username, password):
     client = MongoClient(secrets.mongo_host_connection(username, password))
@@ -173,7 +218,8 @@ def qm_mode(username, password):
         print("[2] Change details about guitar")
         print("[3] Add guitar")
         print("[4] Remove guitar")
-        print("[5] Quit")
+        print("[5] Change loan status")
+        print("[6] Quit")
 
         action = input("What would you like to do: ")
 
@@ -199,7 +245,7 @@ def qm_mode(username, password):
                         print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
 
                 print("Due to issues in the code previously, we will be sending an email to add the admins to add you ASAP. Please except an email ASAP from them once its done (within 3 days).")
-                print("We are sorry for the inconvinience caused")
+                print("We are sorry for the inconvenience caused")
 
                 while True:
                     print("Please enter your email below (required for the database admins to contact you about the completion of it")
@@ -213,7 +259,59 @@ def qm_mode(username, password):
                 make_user(new_user, new_password, email, username)
 
                 del new_user, new_password
+            elif action == "2":
+                print("Not available yet. Coming soon!")
+                # client = MongoClient(secrets.mongo_host_connection("user", "blank", True))
+                # db = client["inventory"]
+                # collection = db["inventory"]
+                #
+                # documents = list(collection.find())
+                #
+                # table = PrettyTable(["S/N", "Code", "Brand", "Allocation",
+                #                      "Level", "BC", "MOE Code", "Remarks", "Rented"])
+                #
+                # largest_sn = 0
+                #
+                # for document in documents:
+                #     rows = []
+                #     for key in document:
+                #         if key != "_id":
+                #             if str(document[key]) != "nan" and key != "S/N":
+                #                 rows.append(document[key])
+                #             elif key == "S/N":
+                #                 rows.append(str(document[key]))
+                #                 if largest_sn < int(document["S/N"]):
+                #                     largest_sn = int(document["S/N"])
+                #             else:
+                #                 rows.append("-")
+                #
+                #     table.add_row(rows)
+                #
+                # print(table)
+                #
+                # print(colorama.Back.LIGHTBLACK_EX +
+                #       "\x1B[3mAll data available on the guitars has been shown.\x1B[0m")
+                #
+                # while True:
+                #     ans = input("What guitar would you like to modify? ")
+                #     try:
+                #         if int(ans) <= 1 or int(ans) >= largest_sn:
+                #             break
+                #         else:
+                #             print(colorama.Fore.LIGHTRED_EX + "Value out of range. Please try again." + colorama.Style.RESET_ALL)
+                #     except Exception as e:
+                #         print(colorama.Fore.LIGHTRED_EX + "Error!")
+                #         print("Invalid input, please try again." + colorama.Style.RESET_ALL)
+                #
+                #
+            elif action == "3":
+                print("Sorry for the inconvenience caused. This feature is not currently available yet. Coming soon!")
+                # Coming sooon
+            elif action == "4":
+                print("Sorry for the inconvenience caused. This feature is not currently available yet. Coming soon!")
             elif action == "5":
+                view_guitars(username, reset=True)
+            elif action == "6":
                 exit(0)
         except Exception as e:
             print(e)
