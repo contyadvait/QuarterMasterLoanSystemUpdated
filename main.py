@@ -58,6 +58,8 @@ def login_page():
         else:
             print("Login failed. Please try again.")
 
+    mongodb.qm_mode(username, password)
+
 
 def create_loa():
     while True:
@@ -89,7 +91,7 @@ def create_loa():
 def main():
     print("Welcome to the SPSGE Loan App!")
     print("Please select one of the options, based on the index on the side (the number in the square brackets)")
-    print("[1] Log in")
+    print("[1] Log in - FOR QMs ONLY")
     print("[2] Request a Leave-Of-Absence")
     print("[3] Loan a guitar")
     print("[4] Exit")

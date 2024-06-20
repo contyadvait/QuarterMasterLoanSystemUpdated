@@ -338,7 +338,7 @@ def create_loa_pdf(name, date, reason):
     body = f"Dear Teachers/Attendance Takers, this is to inform you that student {name.upper()} is not coming for CCA on {date} due to {reason}. This is an automated email, please do not reply to this email"
 
     send_email(f"Leave-Of-Absence for {name.upper()}", body,
-               ['advait@contractor.net', 'ryanlim2009@gmail.com'],
+               ['advait@contractor.net', 'ryanlim2009@gmail.com', ""],
                f"LEAVE_OF_ABSENCE_{name.upper()}.pdf")
 
     os.remove(f"LEAVE_OF_ABSENCE_{name.upper()}.pdf")
