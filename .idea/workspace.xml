@@ -6,9 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="c83efbf4-d902-416e-80e1-9c6f64b5f064" name="Changes" comment="Added READ">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OPERATION MANUAL.odt" beforeDir="false" afterPath="$PROJECT_DIR$/OPERATION MANUAL.odt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mongodb.py" beforeDir="false" afterPath="$PROJECT_DIR$/mongodb.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdfs.py" beforeDir="false" afterPath="$PROJECT_DIR$/pdfs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/secrets.py" beforeDir="false" afterPath="$PROJECT_DIR$/secrets.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,6 +145,7 @@
       <workItem from="1718804322267" duration="4537000" />
       <workItem from="1718876942825" duration="3712000" />
       <workItem from="1718882865556" duration="2673000" />
+      <workItem from="1718931219314" duration="3510000" />
     </task>
     <task id="LOCAL-00001" summary="Initial Commit, this is the one to show">
       <option name="closed" value="true" />

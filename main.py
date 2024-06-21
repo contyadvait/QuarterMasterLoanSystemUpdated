@@ -46,7 +46,7 @@ def verified_input(question, max_int, min_int):
 def login_page():
     global username, password
     while True:
-        userID = input("Please enter your username (enter q to exit): ")
+        userID = getpass("Please enter your username (enter q to exit): ")
         if userID == "q":
             print("Exiting...")
             exit(0)
@@ -58,7 +58,7 @@ def login_page():
         else:
             print("Login failed. Please try again.")
 
-    mongodb.qm_mode(username, password)
+    mongodb.qm_mode(userID, password)
 
 
 def create_loa():

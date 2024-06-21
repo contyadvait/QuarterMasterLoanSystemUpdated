@@ -72,8 +72,7 @@ def create_loan_pdf(guitar_model, email, name, clas, serial_num):
     y_position = 8.75 * inch
 
     # ========LOAN ACKNOWLEDGEMENT=========
-    intro_text = f"I, <u>{name.title()}</u>, of Class <u>{
-        clas}</u>, have been granted the use of the following musical instrument:"
+    intro_text = f"I, <u>{name.title()}</u>, of Class <u>{clas}</u>, have been granted the use of the following musical instrument:"
     intro_paragraph = Paragraph(intro_text, paragraph_style)
     width, height = intro_paragraph.wrap(line_width, line_height)
     intro_paragraph.drawOn(canvas, 1 * inch, y_position - height)
@@ -81,8 +80,7 @@ def create_loan_pdf(guitar_model, email, name, clas, serial_num):
                    )  # Adjust the Y position for the next paragraph
 
     # ========LOANED MODELS=========
-    bullet_text = f"• Instrument: <u>{
-        guitar_model}</u>, Serial Number: <u>{serial_num}</u>"
+    bullet_text = f"• Instrument: <u>{guitar_model}</u>, Serial Number: <u>{serial_num}</u>"
     bullet_paragraph = Paragraph(bullet_text, underline_paragraph_style)
     width, height = bullet_paragraph.wrap(line_width, line_height)
     bullet_paragraph.drawOn(canvas, 1 * inch, y_position - height)
@@ -267,14 +265,13 @@ def create_loan_pdf(guitar_model, email, name, clas, serial_num):
     send_email(f"Guitar Loan for {name.upper()}",
                f"Dear QMs/Teachers,\nThis is the loan applied for by {name.upper()} on guitar {guitar_model} {serial_num}. File is attached "
                "accordingly.\nThis is an automated email, please do not reply to this email.\nThank you.",
-               ["advaitthepro@outlook.com", email], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
+               [email], f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
     os.remove(f"LOAN_FORM_{clas.upper()}_{name.upper()}.pdf")
 
 
 def create_loa_pdf(name, date, reason):
-    canvas = Canvas(f"LEAVE_OF_ABSENCE_{
-                    name.upper()}.pdf", pagesize=LETTER)
+    canvas = Canvas(f"LEAVE_OF_ABSENCE_{name.upper()}.pdf", pagesize=LETTER)
     canvas.setFont("Times-Roman", 18)
 
     image_path = "image.jpg"
@@ -338,7 +335,7 @@ def create_loa_pdf(name, date, reason):
     body = f"Dear Teachers/Attendance Takers, this is to inform you that student {name.upper()} is not coming for CCA on {date} due to {reason}. This is an automated email, please do not reply to this email"
 
     send_email(f"Leave-Of-Absence for {name.upper()}", body,
-               ['advait@contractor.net', 'ryanlim2009@gmail.com', ""],
+               secrets.ATTENDANCE_EMAILS,
                f"LEAVE_OF_ABSENCE_{name.upper()}.pdf")
 
     os.remove(f"LEAVE_OF_ABSENCE_{name.upper()}.pdf")

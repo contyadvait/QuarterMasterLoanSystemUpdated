@@ -1,3 +1,5 @@
+from getpass import getpass
+
 from pymongo import MongoClient
 import traceback
 from datetime import datetime
@@ -115,7 +117,12 @@ def view_guitars(name, reset=False):
         for key in document:
             if key != "_id":
                 if str(document[key]) != "nan" and key != "S/N":
-                    rows.append(document[key])
+                    if document["RENTED"] == "T" and key == "RENTED":
+                        rows.append(colorama.Fore.LIGHTRED_EX + "Not available for rent" + colorama.Style.RESET_ALL)
+                    elif document["RENTED"] == "F" and key == "RENTED":
+                        rows.append(colorama.Fore.LIGHTGREEN_EX + "Available for rent" + colorama.Style.RESET_ALL)
+                    else:
+                        rows.append(document[key])
                 elif key == "S/N":
                     rows.append(str(document[key]))
                     if largest_sn < int(document["S/N"]):
@@ -172,9 +179,8 @@ def view_guitars(name, reset=False):
                     print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
 
 def login(username, password):
-    client = MongoClient(secrets.mongo_host_connection(username, password))
-
     try:
+        client = MongoClient(secrets.mongo_host_connection(username, password))
         client.admin.command('ping')
         client.close()
         return True
@@ -208,7 +214,6 @@ def is_plain_text_no_spaces_or_special_chars(s):
 
 
 def qm_mode(username, password):
-    print(secrets.mongo_host_connection(username, password))
     client = MongoClient(secrets.mongo_host_connection(username, password))
 
     print("Hello QM!")
@@ -237,7 +242,7 @@ def qm_mode(username, password):
                         print(colorama.Fore.LIGHTRED_EX + "Invalid input. Please try again." + colorama.Style.RESET_ALL)
 
                 while True:
-                    new_password = input("Enter your password (no special characters, no spaces): ")
+                    new_password = getpass("Enter your password (no special characters, no spaces): ")
 
                     if is_plain_text_no_spaces_or_special_chars(new_user):
                         break
